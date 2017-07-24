@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/padding_medium">
+
+    <LinearLayout
+        style="@style/MainItemContainer">
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/Title"/>
+
+        <TextView
+            android:id="@+id/authors"
+            style="@style/Authors"/>
+
+    </LinearLayout>
+
+    <View
+        style="@style/ListItemDivider" />
+
+    <LinearLayout
+       style="@style/PublishedDateContainer">
+
+        <TextView
+            android:id="@+id/publishedDateLabel"
+            style="@style/PublishedDateLabel" />
+
+        <TextView
+            android:id="@+id/publishedDate"
+            style="@style/PublishedDate" />
+    </LinearLayout>
+
+</LinearLayout>

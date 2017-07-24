@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/book_listing_activity_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_large"
+    tools:context="com.example.android.booklisting.BookListingActivity">
+
+    <LinearLayout
+        android:id="@+id/search_view"
+        style="@style/SearchContainer">
+
+        <EditText
+            android:id="@+id/search_field"
+            style="@style/SearchField"/>
+
+        <Button
+            android:id="@+id/search_button"
+            style="@style/SearchButtonStyle" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="@style/HorizontalProgressBar" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/list_view"
+        style="@style/ListView"/>
+
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textAppearance="?android:textAppearanceMedium"/>
+
+</RelativeLayout>

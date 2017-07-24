@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Book Listing</string>
+
+    <!--There is no book to display-->
+    <string name="no_books_found">No books found. Try a different keyword.</string>
+
+    <!--The device has no internet connection-->
+    <string name="no_internet_connection">No internet connection.</string>
+
+    <string name="search_hint">Type here</string>
+
+    <string name="search_button_label">Search</string>
+
+    <string name="published_date_label">Published in</string>
+
+</resources>
