@@ -29,7 +29,7 @@ public class QueryUtils {
     private QueryUtils() {
     }
 
-    public static List<Book> fetchBookData(String requestUrl) {
+    public static List<Book> fetchBookData(String requestUrl, String noAuthorLabel, String noPublishedDateLabel) {
         URL url = createUrl(requestUrl);
         String jsonResponse = null;
         try {
@@ -37,7 +37,7 @@ public class QueryUtils {
         } catch (IOException e) {
             Log.e(LOG_TAG, "Problem making the HTTP request.", e);
         }
-        List<Book> books = extractFeatureFromJson(jsonResponse);
+        List<Book> books = extractFeatureFromJson(jsonResponse, noAuthorLabel, noPublishedDateLabel);
         return books;
     }
 
@@ -100,7 +100,7 @@ public class QueryUtils {
         return output.toString();
     }
 
-    private static List<Book> extractFeatureFromJson(String bookJSON) {
+    private static List<Book> extractFeatureFromJson(String bookJSON, String noAuthorLabel, String noPublishedDateLabel) {
         if (TextUtils.isEmpty(bookJSON)) {
             return null;
         }
@@ -110,6 +110,8 @@ public class QueryUtils {
         try {
 
             JSONObject baseJsonResponse = new JSONObject(bookJSON);
+
+
 
             JSONArray bookArray = baseJsonResponse.getJSONArray("items");
 
@@ -121,13 +123,24 @@ public class QueryUtils {
 
                 String title = volumeInfo.getString("title");
 
-                JSONArray authorsArray = volumeInfo.getJSONArray("authors");
                 List<String> authors = new ArrayList<>();
-                for (int a = 0; a < authorsArray.length(); a++) {
-                    authors.add(authorsArray.getString(a));
+                if (volumeInfo.has("authors")) {
+                    JSONArray authorsArray = volumeInfo.getJSONArray("authors");
+
+                    for (int a = 0; a < authorsArray.length(); a++) {
+                        authors.add(authorsArray.getString(a));
+                    }
+                } else {
+                    authors.add(noAuthorLabel);
                 }
 
-                String publishedDate = volumeInfo.getString("publishedDate");
+                String publishedDate = "";
+                if (volumeInfo.has(publishedDate)) {
+                    publishedDate = volumeInfo.getString("publishedDate");
+                } else {
+                    publishedDate = (noPublishedDateLabel);
+                }
+
 
                 Book book = new Book(title, authors, publishedDate);
 

@@ -75,14 +75,25 @@ public class BookListingActivity extends AppCompatActivity
                         getSystemService(Context.CONNECTIVITY_SERVICE);
 
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
                 if (networkInfo != null && networkInfo.isConnected()) {
                     LoaderManager loaderManager = getLoaderManager();
-                    Bundle queryParam = new Bundle(1);
-                    queryParam.putString("search", searchKeyword);
-                    loaderManager.initLoader(BOOK_LOADER_ID, queryParam, BookListingActivity.this);
+                    if (loaderManager.getLoader(BOOK_LOADER_ID) != null) {
+                        Bundle params = new Bundle(3);
+                        params.putString("search", searchKeyword);
+                        params.putString("noAuthorLabel", getString(R.string.no_author));
+                        params.putString("noPublishedDateLabel", getString(R.string.no_published_date));
+                        loaderManager.restartLoader(BOOK_LOADER_ID, params, BookListingActivity.this);
+                        bookListingAdapter.clear();
+                    } else {
+                        Bundle params = new Bundle(3);
+                        params.putString("search", searchKeyword);
+                        params.putString("noAuthorLabel", getString(R.string.no_author));
+                        params.putString("noPublishedDateLabel", getString(R.string.no_published_date));
+                        loaderManager.initLoader(BOOK_LOADER_ID, params, BookListingActivity.this);
+                    }
                 } else {
                     emptyTextView.setText(R.string.no_internet_connection);
+                    bookListingAdapter.clear();
                 }
             }
         });
@@ -93,20 +104,19 @@ public class BookListingActivity extends AppCompatActivity
     public Loader<List<Book>> onCreateLoader(int id, Bundle bundle) {
         View progressBar = findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.VISIBLE);
-        return new BookLoader(this, GOOGLE_BOOKS_REQUEST_URL + bundle.get("search"));
+        return new BookLoader(this, GOOGLE_BOOKS_REQUEST_URL + bundle.getString("search"),
+                bundle.getString("noAuthorLabel"), bundle.getString(("noPublishedDateLabel")));
     }
 
     @Override
     public void onLoadFinished(Loader<List<Book>> loader, List<Book> books) {
-        emptyTextView.setText(R.string.no_books_found);
-
         View progressBar = findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.GONE);
 
-        bookListingAdapter.clear();
-
         if (books != null && !books.isEmpty()) {
             bookListingAdapter.addAll(books);
+        } else {
+            emptyTextView.setText(R.string.no_books_found);
         }
     }
 
