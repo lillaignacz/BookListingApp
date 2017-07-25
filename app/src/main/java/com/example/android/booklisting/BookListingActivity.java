@@ -7,7 +7,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -22,22 +21,15 @@ public class BookListingActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<List<Book>> {
 
     private static final String LOG_TAG = BookListingActivity.class.getName();
-
-    String searchKeyword = "";
-
-    private String GOOGLE_BOOKS_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
-
     private static final int BOOK_LOADER_ID = 1;
-
-    private BookListingAdapter bookListingAdapter;
-
-    private TextView emptyTextView;
-
+    String searchKeyword = "";
     EditText searchField;
+    private String GOOGLE_BOOKS_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=";
+    private BookListingAdapter bookListingAdapter;
+    private TextView emptyTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i(LOG_TAG, "TEST: BookListingActivity OnCreate() method called");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.booklisting_activity);
@@ -77,18 +69,15 @@ public class BookListingActivity extends AppCompatActivity
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
                     LoaderManager loaderManager = getLoaderManager();
+                    Bundle params = new Bundle(3);
+                    params.putString("search", searchKeyword);
+                    params.putString("noAuthorLabel", getString(R.string.no_author));
+                    params.putString("noPublishedDateLabel", getString(R.string.no_published_date));
                     if (loaderManager.getLoader(BOOK_LOADER_ID) != null) {
-                        Bundle params = new Bundle(3);
-                        params.putString("search", searchKeyword);
-                        params.putString("noAuthorLabel", getString(R.string.no_author));
-                        params.putString("noPublishedDateLabel", getString(R.string.no_published_date));
                         loaderManager.restartLoader(BOOK_LOADER_ID, params, BookListingActivity.this);
                         bookListingAdapter.clear();
                     } else {
-                        Bundle params = new Bundle(3);
-                        params.putString("search", searchKeyword);
-                        params.putString("noAuthorLabel", getString(R.string.no_author));
-                        params.putString("noPublishedDateLabel", getString(R.string.no_published_date));
+
                         loaderManager.initLoader(BOOK_LOADER_ID, params, BookListingActivity.this);
                     }
                 } else {
@@ -97,7 +86,6 @@ public class BookListingActivity extends AppCompatActivity
                 }
             }
         });
-
     }
 
     @Override

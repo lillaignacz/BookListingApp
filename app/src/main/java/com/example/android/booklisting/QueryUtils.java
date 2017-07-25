@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,6 +26,7 @@ import java.util.List;
 public class QueryUtils {
 
     private static final String LOG_TAG = QueryUtils.class.getSimpleName();
+    private static final List[] NO_ITEMS = {};
 
     private QueryUtils() {
     }
@@ -108,49 +110,46 @@ public class QueryUtils {
         List<Book> books = new ArrayList<>();
 
         try {
-
             JSONObject baseJsonResponse = new JSONObject(bookJSON);
 
+            if (baseJsonResponse.has("items")) {
+                JSONArray itemsArray = baseJsonResponse.getJSONArray("items");
 
+                for (int i = 0; i < itemsArray.length(); i++) {
 
-            JSONArray bookArray = baseJsonResponse.getJSONArray("items");
+                    JSONObject currentBook = itemsArray.getJSONObject(i);
 
-            for (int i = 0; i < bookArray.length(); i++) {
+                    JSONObject volumeInfo = currentBook.getJSONObject("volumeInfo");
 
-                JSONObject currentBook = bookArray.getJSONObject(i);
+                    String title = volumeInfo.getString("title");
 
-                JSONObject volumeInfo = currentBook.getJSONObject("volumeInfo");
-
-                String title = volumeInfo.getString("title");
-
-                List<String> authors = new ArrayList<>();
-                if (volumeInfo.has("authors")) {
-                    JSONArray authorsArray = volumeInfo.getJSONArray("authors");
-
-                    for (int a = 0; a < authorsArray.length(); a++) {
-                        authors.add(authorsArray.getString(a));
+                    List<String> authors = new ArrayList<>();
+                    if (volumeInfo.has("authors")) {
+                        JSONArray authorsArray = volumeInfo.getJSONArray("authors");
+                        for (int a = 0; a < authorsArray.length(); a++) {
+                            authors.add(authorsArray.getString(a));
+                        }
+                    } else {
+                        authors.add(noAuthorLabel);
                     }
-                } else {
-                    authors.add(noAuthorLabel);
+
+                    String publishedDate = "";
+                    if (volumeInfo.has(publishedDate)) {
+                        publishedDate = volumeInfo.getString("publishedDate");
+                    } else {
+                        publishedDate = (noPublishedDateLabel);
+                    }
+
+                    Book book = new Book(title, authors, publishedDate);
+                    books.add(book);
                 }
-
-                String publishedDate = "";
-                if (volumeInfo.has(publishedDate)) {
-                    publishedDate = volumeInfo.getString("publishedDate");
-                } else {
-                    publishedDate = (noPublishedDateLabel);
-                }
-
-
-                Book book = new Book(title, authors, publishedDate);
-
-                books.add(book);
+            } else {
+                return Collections.emptyList();
             }
 
         } catch (JSONException e) {
             Log.e("QueryUtils", "Problem parsing the book JSON results", e);
         }
-
         return books;
     }
 }
